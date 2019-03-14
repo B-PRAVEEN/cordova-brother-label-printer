@@ -58,6 +58,7 @@ import com.brother.ptouch.sdk.NetPrinter;
 import com.brother.ptouch.sdk.Printer;
 import com.brother.ptouch.sdk.PrinterInfo;
 import com.brother.ptouch.sdk.PrinterStatus;
+import com.brother.ptouch.sdk.LabelInfo;
 
 public class BrotherPrinter extends CordovaPlugin {
 
@@ -423,18 +424,16 @@ public class BrotherPrinter extends CordovaPlugin {
 
                     myPrinterInfo = myPrinter.getPrinterInfo();
 
+                    Log.d(TAG, "PRINTINFO: "+ipAddress);
+
                     myPrinterInfo.printerModel  = PrinterInfo.Model.valueOf(printerModel);
                     myPrinterInfo.port          = PrinterInfo.Port.valueOf(port);
+                    myPrinterInfo.ipAddress     = ipAddress;
 
-                    if (PrinterInfo.Port.NET.toString().equals(port)) {
-                        myPrinterInfo.ipAddress = PrinterInfo.Port.NET.valueOf(ipAddress).toString();
-                    }
-
-                    myPrinter.setPrinterInfo(myPrinterInfo);
-
-                    myPrinter.startCommunication();
-                    myPrinterInfo.labelNameIndex  = myPrinter.getLabelInfo().labelNameIndex;
-                    myPrinter.endCommunication();
+                    myPrinterInfo.printMode     = PrinterInfo.PrintMode.FIT_TO_PAGE;
+                    myPrinterInfo.orientation   = PrinterInfo.Orientation.PORTRAIT;
+                    myPrinterInfo.paperSize     = PrinterInfo.PaperSize.CUSTOM;
+                    
 
                     myPrinterInfo.isAutoCut       = true;
                     myPrinterInfo.isCutAtEnd      = true;
@@ -442,6 +441,27 @@ public class BrotherPrinter extends CordovaPlugin {
                     myPrinterInfo.isSpecialTape   = false;
 
                     myPrinter.setPrinterInfo(myPrinterInfo);
+
+                    
+                    //myPrinter.startCommunication();
+                    LabelInfo myLabelInfo = myPrinter.getLabelInfo();
+                    Log.d(TAG, "Mediam Type: "+ LabelInfo.QL700.W62.ordinal());
+                    myLabelInfo.labelNameIndex  = LabelInfo.QL700.W62.ordinal();
+                    //myPrinter.endCommunication();
+
+
+                    // if (PrinterInfo.Port.NET.toString().equals(port)) {
+                    //     myPrinterInfo.ipAddress = PrinterInfo.Port.NET.valueOf(ipAddress).toString();
+                    // }
+                    
+                    //IMP CODE
+                    myPrinter.setLabelInfo(myLabelInfo);
+                    
+                    //Not Working Code 
+                    // myPrinter.startCommunication();
+                    // myPrinterInfo.labelNameIndex  = myPrinter.getLabelInfo().labelNameIndex;
+                    // myPrinter.endCommunication();
+
 
                     myPrinter.startCommunication();
                     PrinterStatus status = myPrinter.printImage(bitmap);
